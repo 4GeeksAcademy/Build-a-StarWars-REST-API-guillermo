@@ -45,6 +45,29 @@ def handle_hello():
 
     return jsonify(response_body), 200
 
+@app.route('/people', methods=['GET'])
+def get_people():
+    people = User.query.all()
+    all_people = list(map(lambda p : p.serialize(), people))
+   
+
+    return jsonify(all_people), 200
+
+@app.route('/people', methods=['POST'])
+def post_people():
+    request_body = request.get_json()
+    new_user = User(
+        email= request_body["email"],
+        name= request_body["name"],
+        password= request_body["password"],
+        first_name= request_body["first_name"],
+        last_name= request_body["last_name"]
+    )
+    db.session.add(new_user)
+    db.session.commit()
+    return jsonify(new_user.serialize()), 200
+
+
 # this only runs if `$ python src/app.py` is executed
 if __name__ == '__main__':
     PORT = int(os.environ.get('PORT', 3000))
