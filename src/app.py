@@ -196,7 +196,14 @@ def delete_favorite(favorite_id):
     db.session.commit()
     return jsonify({"message": "favorite deleted successfully"}), 200
 
-
+@app.route('/users/<int:user_id>/favorites', methods=['GET'])
+def get_favorite(user_id):
+    user = User.query.get(user_id)
+    if user is None:
+        return jsonify({"error": "User not found"}), 404
+    
+    favorites = [favorite.serialize() for favorite in user.favorites]
+    return jsonify(favorites), 200
 
 # this only runs if `$ python src/app.py` is executed
 if __name__ == '__main__':
